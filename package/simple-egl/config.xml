@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" id="runxdg" version="0.1">
+  <name>SimpleEGL</name>
+  <icon src="icon.svg"/>
+  <content src="bin/runxdg" type="application/vnd.agl.native"/>
+  <description>Launcher for XDG application on AGL HomeScreen 2017</description>
+  <author>Panasonic Corporation</author>
+  <license>MIT</license>
+  <feature name="urn:AGL:widget:required-api">
+    <param name="homescreen" value="ws" />
+    <param name="windowmanager" value="ws" />
+  </feature>
+  <feature name="urn:AGL:widget:required-permission">
+    <param name="urn:AGL:permission::public:no-htdocs" value="required" />
+    <param name="http://tizen.org/privilege/internal/dbus" value="required" />
+  </feature>
+</widget>
