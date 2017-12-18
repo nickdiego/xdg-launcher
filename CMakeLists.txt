@@ -1,72 +1,60 @@
+cmake_minimum_required(VERSION 3.0)
 project (runxdg)
 
-cmake_minimum_required(VERSION 3.0)
-
-set(PROJECT_NAME "runxdg")
 set(PROJECT_PRETTY_NAME "Run XDG Application")
 set(PROJECT_MAJOR_VERSION "1.0")
 set(PROJECT_MINOR_VERSION "1")
 set(PROJECT_VERSION "${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}")
 
-add_definitions(-DTARGET_APP_ID=${TARGET_APP_ID})
-add_definitions(-DRUNXDG_NAME=${RUNXDG_NAME})
-
-set(CMAKE_CXX_FLAGS "-Wall -fpermissive")
-
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(GIO REQUIRED gio-2.0)
-pkg_check_modules(GMODULE REQUIRED gmodule-2.0)
+pkg_check_modules(ILMCONTROL REQUIRED ilmControl)
 
-INCLUDE(FindPkgConfig)
+# No configuration
+# configure_file (
+#   "${PROJECT_SOURCE_DIR}/config.h.in"
+#   "${PROJECT_BINARY_DIR}/config.h"
+# )
+#
+# include_directories("${PROJECT_BINARY_DIR}")
 
-INCLUDE_DIRECTORIES(
-  include
-  ${GLIB_INCLUDE_DIRS}
-  ${GIO_INCLUDE_DIRS}
+include_directories(
+  "include"
+  "${ILMCONTROL_INCLUDE_DIRS}"
+  "${GLIB_INCLUDE_DIRS}"
+  "${GIO_INCLUDE_DIRS}"
   )
-
-LINK_DIRECTORIES(
-  ${GLIB_LIBRARY_DIRS}
-  ${GIO_LIBRARY_DIRS}
-  )
-
-SET(LIBRARIES
-  libwindowmanager.so
-  libhomescreen.so
-  libilmControl.so
-  libilmCommon.so
-  libafbwsc.so
-  libjson-c.so
-  libEGL.so
-  libGLESv2.so
-  libwayland-egl.so
-  libwayland-client.so
-  libpthread.so
-  ${GLIB_LIBRARIES}
-  ${GIO_LIBRARIES}
-)
 
 SET(SRC_FILES
     src/runxdg.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+SET(LIBRARIES
+  windowmanager
+  homescreen
+  ${ILMCONTROL_LIBRARIES}
+  afbwsc
+  json-c
+  pthread
+  ${GLIB_LIBRARIES}
+  ${GIO_LIBRARIES}
+  )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${LIBRARIES})
+add_executable (runxdg ${SRC_FILES})
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+TARGET_LINK_LIBRARIES (runxdg ${LIBRARIES})
+
+install (TARGETS runxdg DESTINATION bin)
+
+add_custom_command(TARGET runxdg POST_BUILD
   COMMAND cp -rf ${CMAKE_CURRENT_SOURCE_DIR}/package ${PROJECT_BINARY_DIR})
 
 add_custom_target(widget
-
+  # simple egl
   COMMAND wgtpkg-pack -f -o ${PROJECT_BINARY_DIR}/package/simple-egl.wgt ${PROJECT_BINARY_DIR}/package/simple-egl
-
   # override hvac to test runxdg
   COMMAND wgtpkg-pack -f -o ${PROJECT_BINARY_DIR}/package/hvac.wgt ${PROJECT_BINARY_DIR}/package/hvac
-
   # override navigation to test runxdg
   COMMAND wgtpkg-pack -f -o ${PROJECT_BINARY_DIR}/package/navi.wgt ${PROJECT_BINARY_DIR}/package/navi
 )
-
-install (TARGETS ${PROJECT_NAME} DESTINATION bin)
