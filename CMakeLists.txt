@@ -57,4 +57,11 @@ add_custom_target(widget
   COMMAND wgtpkg-pack -f -o ${PROJECT_BINARY_DIR}/package/hvac.wgt ${PROJECT_BINARY_DIR}/package/hvac
   # override navigation to test runxdg
   COMMAND wgtpkg-pack -f -o ${PROJECT_BINARY_DIR}/package/navi.wgt ${PROJECT_BINARY_DIR}/package/navi
+
+  # test for video
+  COMMAND wgtpkg-pack -f -o ${PROJECT_BINARY_DIR}/package/video.wgt ${PROJECT_BINARY_DIR}/package/video
+
+  # test for webbrowser
+  COMMAND wgtpkg-pack -f -o ${PROJECT_BINARY_DIR}/package/webbrowser.wgt ${PROJECT_BINARY_DIR}/package/webbrowser
+
 )
