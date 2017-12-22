@@ -410,7 +410,29 @@ int RunXDG::parse_config (const char *path_to_config)
   auto params = app->get_array_of<std::string>("params");
   for (const auto& param : *params)
   {
+    // replace special string "@port@" and "@token@"
+    size_t found = param.find("@port@");
+    if (found != std::string::npos) {
+      std::string sub1 = param.substr(0, found);
+      std::string sub2 = param.substr(found + 6, param.size() - found);
+      std::string str = sub1 + std::to_string(m_port) + sub2;
+      pl->m_args_v.push_back(str);
+      AGL_DEBUG("params[%s] (match @port@)", str.c_str());
+      continue;
+    }
+
+    found = param.find("@token@");
+    if (found != std::string::npos) {
+      std::string sub1 = param.substr(0, found);
+      std::string sub2 = param.substr(found + 7, param.size() - found);
+      std::string str = sub1 + m_token + sub2;
+      pl->m_args_v.push_back(str);
+      AGL_DEBUG("params[%s] (match @token@)", str.c_str());
+      continue;
+    }
+
     pl->m_args_v.push_back(param);
+
     AGL_DEBUG("params[%s]", param.c_str());
   }
 

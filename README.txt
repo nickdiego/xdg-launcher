@@ -23,6 +23,16 @@ How to build with SDK
    e.g. followings are predefined role by default
    "role": "MediaPlayer|Radio|Phone|Navigation|HVAC|Settings|Dashboard|POI|Mixer"
 
+   In order to pass port number and token which are given from
+   AGL application framework binder to XDG application,
+   you can use special string '@port@' and '@token@'.
+
+   For 'params', you can use special string '@port@' and '@token@"
+   to pass them to target XDG application
+   which are from AGL application framework binder.
+
+   e.g. params = [ --port=@port@ --secret=@token@ ]
+
 3. Prepare config.xml for widget
 
    <content> should be follow.
