@@ -11,12 +11,12 @@ method = "POSIX"
 #   path = "/usr/bin/chromium"
 path = "/usr/bin/weston-simple-egl"
 
-# params: arguments of the excecutable 
+# params: arguments of the excecutable
 # e.g.
 #   params = [
 #     "--mus",
 #     "--no-sandbox",
-#     '--window-size="1080,1488"',
+#     "--window-size=1080,1488",
 #     "--ozone-platform=wayland",
 #     "<URL>"
 #   ]
