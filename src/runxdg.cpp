@@ -28,6 +28,7 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 
+#include <algorithm>
 #include <cstdio>
 
 #include "cpptoml/cpptoml.h"
@@ -486,14 +487,10 @@ void POSIXLauncher::register_surfpid (pid_t surf_pid)
 
 void POSIXLauncher::unregister_surfpid (pid_t surf_pid)
 {
-  auto itr = m_pid_v.begin();
-  while (itr != m_pid_v.end()) {
-    if (*itr == surf_pid) {
-      m_pid_v.erase(itr++);
-    } else {
-      ++itr;
-    }
-  }
+  auto beg = m_pid_v.begin();
+  auto end = m_pid_v.end();
+  m_pid_v.erase(std::remove(beg, end, surf_pid), end);
+  AGL_DEBUG("Unregistered surface (id=%d sz=%u)", surf_pid, m_pid_v.size());
 }
 
 pid_t POSIXLauncher::find_surfpid_by_rid (pid_t rid)
