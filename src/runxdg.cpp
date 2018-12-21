@@ -84,7 +84,8 @@ void RunXDG::notify_ivi_control_cb (ilmObjectType object, t_ilm_uint id,
     m_launcher->register_surfpid(surf_pid);
     if (m_launcher->m_rid &&
         surf_pid == m_launcher->find_surfpid_by_rid(m_launcher->m_rid)) {
-      setup_surface(id);
+      m_ivi_id = id;
+      setup_surface();
     }
     m_surfaces[surf_pid] = id;
   } else if (object == ILM_LAYER) {
@@ -280,12 +281,16 @@ int RunXDG::init_wm (void)
     return -1;
   }
 
-  std::function< void(json_object*) > h_active = [](json_object* object) {
+  std::function< void(json_object*) > h_active = [this](json_object* object) {
     AGL_DEBUG("Got Event_Active");
+    t_ilm_surface s_ids[1] = { this->m_ivi_id };
+    ilm_setInputFocus(s_ids, 1, ILM_INPUT_DEVICE_KEYBOARD, ILM_TRUE);
   };
 
-  std::function< void(json_object*) > h_inactive = [](json_object* object) {
+  std::function< void(json_object*) > h_inactive = [this](json_object* object) {
     AGL_DEBUG("Got Event_Inactive");
+    t_ilm_surface s_ids[1] = { this->m_ivi_id };
+    ilm_setInputFocus(s_ids, 1, ILM_INPUT_DEVICE_KEYBOARD, ILM_FALSE);
   };
 
   std::function< void(json_object*) > h_visible = [](json_object* object) {
@@ -451,13 +456,13 @@ RunXDG::RunXDG (int port, const char* token, const char* id)
   AGL_DEBUG("RunXDG created.");
 }
 
-void RunXDG::setup_surface (int id)
+void RunXDG::setup_surface (void)
 {
-  std::string sid = std::to_string(id);
+  std::string sid = std::to_string(m_ivi_id);
 
   // This surface is mine, register pair app_name and ivi id.
-  AGL_DEBUG("requestSurfaceXDG(%s,%d)", m_role.c_str(), id);
-  m_wm->requestSurfaceXDG(this->m_role.c_str(), id);
+  AGL_DEBUG("requestSurfaceXDG(%s,%d)", m_role.c_str(), m_ivi_id);
+  m_wm->requestSurfaceXDG(this->m_role.c_str(), (unsigned int)m_ivi_id);
 
   if (m_pending_create) {
     // Recovering 1st time tap_shortcut is dropped because
@@ -556,6 +561,8 @@ void RunXDG::start (void)
   AGL_DEBUG("waiting for notification: surafce created");
   m_pending_create = true;
 
+  ilm_commitChanges();
+
   // in case, target app has already run
   if (m_launcher->m_rid) {
     pid_t surf_pid = m_launcher->find_surfpid_by_rid(m_launcher->m_rid);
@@ -567,10 +574,13 @@ void RunXDG::start (void)
         int id = itr->second;
         AGL_DEBUG("surface %d for <%s> already exists", id,
                   m_role.c_str());
-        setup_surface(id);
+        m_ivi_id = id;
+        setup_surface();
       }
     }
   }
+
+  ilm_commitChanges();
   m_launcher->loop(e_flag);
 }
 
