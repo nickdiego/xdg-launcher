@@ -10,6 +10,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(GIO REQUIRED gio-2.0)
 pkg_check_modules(ILMCONTROL REQUIRED ilmControl)
+pkg_check_modules(ILMINPUT REQUIRED ilmInput)
 
 # No configuration
 # configure_file (
@@ -22,6 +23,7 @@ pkg_check_modules(ILMCONTROL REQUIRED ilmControl)
 include_directories(
   "include"
   "${ILMCONTROL_INCLUDE_DIRS}"
+  "${ILMINPUT_INCLUDE_DIRS}"
   "${GLIB_INCLUDE_DIRS}"
   "${GIO_INCLUDE_DIRS}"
   )
@@ -34,6 +36,7 @@ SET(LIBRARIES
   windowmanager
   homescreen
   ${ILMCONTROL_LIBRARIES}
+  ${ILMINPUT_LIBRARIES}
   afbwsc
   json-c
   pthread

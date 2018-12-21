@@ -30,6 +30,7 @@
 #include <gio/gio.h>
 
 #include <ilm/ilm_control.h>
+#include <ilm/ilm_input.h>
 
 #include <libwindowmanager.h>
 #include <libhomescreen.hpp>
@@ -149,6 +150,8 @@ class RunXDG
     LibHomeScreen *m_hs;
     ILMControl *m_ic;
 
+    t_ilm_surface m_ivi_id;
+
     std::map<int, int> m_surfaces;  // pair of <afm:rid, ivi:id>
 
     bool m_pending_create = false;
@@ -158,7 +161,7 @@ class RunXDG
 
     int parse_config(const char *file);
 
-    void setup_surface(int id);
+    void setup_surface(void);
 };
 
 #endif  // RUNXDG_HPP
